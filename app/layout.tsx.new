@@ -1,0 +1,36 @@
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import './globals.css'
+
+const inter = Inter({ subsets: ['latin'] })
+
+export const metadata: Metadata = {
+  title: 'CardioTrack ZA - Mobile Heart Health Monitor',
+  description: 'Mobile-first heart health tracking app for South Africa',
+  manifest: '/manifest.json',
+  themeColor: '#0E8A8A',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'CardioTrack ZA'
+  },
+  formatDetection: {
+    telephone: false
+  }
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+          {children}
+        </div>
+      </body>
+    </html>
+  )
+}

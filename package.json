@@ -1,0 +1,31 @@
+{
+  "name": "cardiotrack-za-local",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "typescript": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "tailwind-merge": "latest",
+    "clsx": "latest"
+  },
+  "devDependencies": {
+    "autoprefixer": "latest",
+    "postcss": "latest",
+    "tailwindcss": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "micro": "latest"
+  },
+  "description": "Mobile-first health tracking app with offline-first capabilities"
+}

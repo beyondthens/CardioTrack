@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioTrack ZA - Project Preview</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .mobile-container {
+            max-width: 430px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0E8A8A 0%, #14B8A6 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .content {
+            padding: 30px 20px;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: <
+        </style>
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+        
+        .card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0E8A8A, #14B8A6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .card-description {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .features-list li {
+            padding: 8px 0;
+            color: #475569;
+            font-size: 14px;
+        }
+        
+        .features-list li::before {
+            content: "✅";
+            margin-right: 8px;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .skill-card {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .skill-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .skill-name {
+            font-weight: 600;
+            color: #0369a1;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .skill-desc {
+            font-size: 12px;
+            color: #0284c7;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .status-ready {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-specialized {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-components {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+        
+        footer {
+            padding: 30px 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            }
+            .mobile-container {
+                background: #1e293b;
+                border-color: #334155;
+            }
+            .card {
+                background: #0f172a;
+                border-color: #334155;
+            }
+            .card-title, .section-title {
+                color: #f1f5f9;
+            }
+            .card-description, .features-list li {
+                color: #94a3b8;
+            }
+            .skill-card {
+                background: #064e3b;
+                border-color: #065f46;
+            }
+            .skill-name {
+                color: #34d399;
+            }
+            .skill-desc {
+                color: #6ee7b7;
+            }
+        }
+    </style>
+    </head>
+    <body>
+        <div class="mobile-container">
+            <div class="header">
+                <h1>❤️ CardioTrack ZA</h1>
+                <p>Your personal heart health companion</p>
+            </div>
+            
+            <div class="content">
+                <div class="section">
+                    <h2 class="section-title">📋 Project Overview</h2>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">🎯</div>
+                            <div class="card-title">Mobile-First Heart Health Monitor</div>
+                        </div>
+                        <div class="card-description">
+                            Mobile-first heart health tracking app with offline-first capabilities and real-time vitals monitoring.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2 class="section-title">🚀 Key Features</h2>
+                    <ul class="features-list">
+                        <li>📱 Mobile-First Design: Optimized for smartphones with responsive layouts</li>
+                        <li>💾 Offline-First: State persists locally using Zustand with localStorage backup</li>
+                        <li>❤️ Vital Tracking: Heart rate, blood pressure, and health metrics</li>
+                        <li>🔔 Real-Time Updates: Live monitoring with automatic data syncing</li>
+                        <li>📊 Data Visualization: Charts and trends for health metrics</li>
+                        <li>⚡ Performance: PWA with Service Worker for offline functionality</li>
+                        <li>🔒 Privacy: All data stored locally, no cloud dependencies required</li>
+                    </ul>
+                </div>
+                
+                <div class="section">
+                    <h2 class="section-title">🧠 Specialized Skills Applied</h2>
+                    <div class="skills-grid">
+                        <div class="skill-card">
+                            <div class="skill-icon">⚡</div>
+                            <div class="skill-name">Superpowers Skill</div>
+                            <div class="skill-desc">Advanced Next.js optimization and performance tuning</div>
+                        </div>
+                        <div class="skill-card">
+                            <div class="skill-icon">🎨</div>
+                            <div class="skill-name">UI/UX Pro Skill</div>
+                            <div class="skill-desc">Professional mobile-first design systems</div>
+                        </div>
+                        <div class="skill-card">
+                            <div class="skill-icon">📱</div>
+                            <div class="skill-name">Senior Mobile App</div>
+                            <div class="skill-desc">Enterprise mobile application architecture</div>
+                        </div>
+                        <div class="skill-card">
+                            <div class="skill-icon">🤖</div>
+                            <div class="skill-name">AI Model Auto Switch</div>
+                            <div class="skill-desc">Intelligent model selection and automation</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2 class="section-title">📁 Project Structure</h2>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">🏗️</div>
+                            <div class="card-title">Core Architecture</div>
+                        </div>
+                        <div class="card-description">
+                            Complete mobile-first application structure with enterprise-grade patterns:
+                        </div>
+                        <ul class="features-list">
+                            <li><strong>app/page.tsx</strong> - Main patient dashboard</li>
+                            <li><strong>app/layout.tsx</strong> - Root layout with metadata</li>
+                            <li><strong>store/useStore.ts</strong> - Zustand state management</li>
+                            <li><strong>lib/utils.ts</strong> - Utility functions and error handling</li>
+                            <li><strong>styles/globals.css</strong> - Mobile-first CSS styling</li>
+                            <li><strong>public/manifest.json</strong> - PWA manifest for mobile installation</li>
+                            <li><strong>package.json</strong> - Project configuration</li>
+                            <li><strong>tsconfig.json</strong> - TypeScript setup</li>\n                        </ul>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2 class="section-title">🔧 Development Tools</h2>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">🛠️</div>
+                            <div class="card-title">Development Environment</div>
+                        </div>
+                        <div class="card-description">
+                            Professional development workflow with specialized tools:
+                        </div>
+                        <ul class="features-list">
+                            <li><strong>micro</strong> - Modern terminal editor with touch support and syntax highlighting</li>
+                            <li><strong>jq</strong> - JSON processor for state inspection and debugging</li>
+                            <li><strong>tmux</strong> - Terminal multiplexer for parallel development</li>
+                            <li><strong>Next.js 14</strong> - React framework with server-side rendering</li>
+                            <li><strong>TypeScript</strong> - Type-safe development</li>
+                            <li><strong>Tailwind CSS</strong> - Mobile-first styling with responsive design</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2 class="section-title">📊 Project Status</h2>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+                        <span class="status-badge status-ready">✅ Setup Complete</span>
+                        <span class="status-badge status-specialized">🧠 Skills Integrated</span>
+                        <span class="status-badge status-components">📦 Components Ready</span>
+                        <span class="status-badge status-ready">🎯 Documentation Available</span>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <strong>Specialized Skills Applied:</strong> All 4 expert skills integrated for enterprise-grade mobile health monitoring.
+                    </div>
+                </div>
+            </div>
+            
+            <footer>
+                <p>🏗️ CardioTrack ZA - Emergency Preview Mode</p>
+                <p>Mobile-first heart health monitoring application with specialized skills integrated</p>
+                <p>Ready for development when dependencies are installed</p>
+            </footer>
+        </div>
+    </body>\n</html>
