@@ -1,0 +1,6 @@
+{
+  "name": "CardioTrack ZA",
+  "description": "Mobile-first cardiovascular & vitals health monitoring companion with offline sync, emergency contacts, blood pressure staging, and Render cloud hosting management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
