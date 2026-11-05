@@ -115,7 +115,7 @@ export function calculateReadingAverage(readings: Array<{ heartRate: number; blo
 
 export function exportDataToJSON<T>(data: T, filename: string): void {
   const dataStr = JSON.stringify(data, null, 2)
-  const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}"
+  const dataUri = `data:application/json;charset=utf-8,${encodeURIComponent(dataStr)}`
   
   const exportName = `${filename}-${new Date().toISOString().split('T')[0]}.json`
   

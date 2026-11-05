@@ -23,7 +23,7 @@ export function ReadingCard({ reading }: { reading: any }) {
           </h3>
           <p className="text-sm text-gray-500">
             {reading.time || ''}
-          </p>
+          </div>
         </div>
         <div className="text-sm">
           {isOffline ? (
@@ -52,12 +52,12 @@ export function ReadingCard({ reading }: { reading: any }) {
         </div>
         <p className={`text-xs ${color}`}>
           {label}
-        </p>
+        </div>
       </div>
       
       <div className="text-xs text-gray-400">
         {reading.notes || 'No notes'}
-      </p>
+      </div>
       
       <div className="mt-4 pt-4 border-t border-gray-100">
         <button
@@ -85,7 +85,7 @@ export function EmptyState({ hasReadings }: { hasReadings: boolean }) {
       <h3 className="text-xl font-medium text-gray-500 mb-2">No readings yet</h3>
       <p className="text-gray-400 text-sm mb-6">
         Start tracking your heart health by adding your first reading
-      </p>
+      </div>
       <button
         className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 transition-colors"
         onClick={() => window.location.hash = '#add-reading'}

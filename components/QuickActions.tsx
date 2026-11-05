@@ -34,7 +34,7 @@ export function QuickActions() {
         >
           ➕ Quick Add Reading
           <div className="mt-1 text-xs">
-            {patientData.heartRate ? `Last: {formatHeartRate(patientData.heartRate)}` : 'Tap to add'}
+            {patientData.heartRate ? `Last: ${formatHeartRate(patientData.heartRate)}` : 'Tap to add'}
           </div>
         </button>
         
