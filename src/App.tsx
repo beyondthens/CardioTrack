@@ -100,8 +100,21 @@ interface VitalReading {
   category: string;
 }
 
+interface Medication {
+  id: number;
+  userId: string;
+  patientName: string;
+  medName: string;
+  dosage: string;
+  frequency: string;
+  reminderTime: string;
+  takenToday: boolean;
+  adherenceStreak: number;
+  notes: string;
+}
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'vitals' | 'trends' | 'bmi' | 'pms' | 'telemed' | 'tap' | 'history' | 'apk' | 'cockroach' | 'render' | 'emergency'>('vitals');
+  const [activeTab, setActiveTab] = useState<'vitals' | 'trends' | 'bmi' | 'pms' | 'telemed' | 'tap' | 'history' | 'apk' | 'cockroach' | 'render' | 'emergency' | 'medications'>('vitals');
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [vitalsList, setVitalsList] = useState<VitalReading[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -160,6 +173,76 @@ export default function App() {
   const [configAutoSync, setConfigAutoSync] = useState(true);
   const [isSyncingPms, setIsSyncingPms] = useState(false);
 
+  // Medication Manager State
+  const [medications, setMedications] = useState<Medication[]>([]);
+  const [showAddMedModal, setShowAddMedModal] = useState(false);
+  const [medNameInput, setMedNameInput] = useState('');
+  const [medDosageInput, setMedDosageInput] = useState('');
+  const [medFrequencyInput, setMedFrequencyInput] = useState('Once daily (Morning)');
+  const [medReminderTimeInput, setMedReminderTimeInput] = useState('08:00');
+  const [medNotesInput, setMedNotesInput] = useState('');
+
+  const fetchMedications = async () => {
+    try {
+      const res = await fetch('/api/medications');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.medications) {
+          setMedications(data.medications);
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to load medications');
+    }
+  };
+
+  const toggleMedicationTaken = async (id: number) => {
+    try {
+      const res = await fetch(`/api/medications/${id}/taken`, { method: 'PATCH' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.medication) {
+          setMedications(medications.map((m) => (m.id === id ? data.medication : m)));
+          showToast(`Updated compliance for ${data.medication.medName}`);
+        }
+      }
+    } catch (err) {
+      showToast('Failed to update medication compliance');
+    }
+  };
+
+  const handleAddMedication = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/medications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: currentUser.id,
+          patientName: currentUser.name,
+          medName: medNameInput,
+          dosage: medDosageInput,
+          frequency: medFrequencyInput,
+          reminderTime: medReminderTimeInput,
+          notes: medNotesInput
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.medication) {
+          setMedications([data.medication, ...medications]);
+          setShowAddMedModal(false);
+          setMedNameInput('');
+          setMedDosageInput('');
+          setMedNotesInput('');
+          showToast(`Successfully added ${data.medication.medName} to Medication Manager!`);
+        }
+      }
+    } catch (err) {
+      showToast('Failed to save prescription');
+    }
+  };
+
   // Telemedicine Session Simulation
   const [telemedActive, setTelemedActive] = useState(false);
 
@@ -211,8 +294,9 @@ export default function App() {
       fetchVitals();
     }
 
-    // 2. Fetch PMS Add-ons
+    // 2. Fetch PMS Add-ons & Medications
     fetchPmsAddons();
+    fetchMedications();
 
     // 3. Fetch remote deployment & DB status
     fetchRenderStatus();
@@ -698,6 +782,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-4 flex space-x-1.5 overflow-x-auto py-2.5 scrollbar-hide">
           {[
             { id: 'vitals', label: 'Vitals & Telemetry', icon: Activity },
+            { id: 'medications', label: 'Medication Manager', icon: Clock, badge: `${medications.filter(m => m.takenToday).length}/${medications.length} Taken` },
             { id: 'pms', label: 'PMS & Doctor Add-ons', icon: Building2, badge: `${addons.length} Active` },
             { id: 'telemed', label: 'Telemedicine Portal', icon: Video, badge: 'Live' },
             { id: 'trends', label: 'Visualize Trends', icon: TrendingUp },
@@ -1636,7 +1721,205 @@ export default function App() {
             </div>
           </div>
         )}
+
+        {/* TAB: MEDICATION MANAGER */}
+        {activeTab === 'medications' && (
+          <div className="bg-[#121622]/80 border border-white/10 rounded-3xl p-6 space-y-6 backdrop-blur-md shadow-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-bold text-white flex items-center space-x-2">
+                  <Clock className="w-5 h-5 text-teal-400" />
+                  <span>Medication Manager & Adherence Tracking</span>
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Manage daily prescriptions, dosage, reminder schedules, and persistence in CockroachDB 'medications'.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowAddMedModal(true)}
+                className="bg-teal-500 hover:bg-teal-400 active:scale-95 text-slate-950 font-bold px-4 py-2.5 rounded-2xl text-xs flex items-center justify-center space-x-2 transition shadow-lg shadow-teal-500/20 cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Prescription</span>
+              </button>
+            </div>
+
+            {/* Adherence Summary Metrics */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+              <div className="p-3.5 bg-[#0D111A] rounded-2xl border border-white/5 space-y-1">
+                <span className="text-slate-400 text-[11px] block">Total Prescriptions</span>
+                <span className="text-white font-bold text-base block">{medications.length} active</span>
+              </div>
+              <div className="p-3.5 bg-[#0D111A] rounded-2xl border border-white/5 space-y-1">
+                <span className="text-slate-400 text-[11px] block">Taken Today</span>
+                <span className="text-emerald-400 font-bold text-base block">
+                  {medications.filter((m) => m.takenToday).length} / {medications.length}
+                </span>
+              </div>
+              <div className="p-3.5 bg-[#0D111A] rounded-2xl border border-white/5 space-y-1">
+                <span className="text-slate-400 text-[11px] block">Adherence Rate</span>
+                <span className="text-teal-300 font-bold text-base block">
+                  {medications.length ? Math.round((medications.filter((m) => m.takenToday).length / medications.length) * 100) : 100}%
+                </span>
+              </div>
+              <div className="p-3.5 bg-[#0D111A] rounded-2xl border border-white/5 space-y-1">
+                <span className="text-slate-400 text-[11px] block">Database Sync</span>
+                <span className="text-indigo-300 font-bold text-xs block">CockroachDB Live</span>
+              </div>
+            </div>
+
+            {/* Medications List */}
+            <div className="space-y-3">
+              {medications.length === 0 ? (
+                <div className="text-center py-12 text-slate-400 bg-[#0D111A] rounded-2xl border border-white/5">
+                  <Clock className="w-10 h-10 mx-auto text-slate-500 mb-2 opacity-50" />
+                  <p className="text-sm font-medium">No medications logged yet.</p>
+                  <p className="text-xs text-slate-500 mt-1">Click "Add Prescription" to record your daily medications.</p>
+                </div>
+              ) : (
+                medications.map((med) => (
+                  <div
+                    key={med.id}
+                    className={`p-4 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                      med.takenToday
+                        ? 'bg-emerald-950/15 border-emerald-500/30'
+                        : 'bg-[#0D111A] border-white/10 hover:border-teal-500/30'
+                    }`}
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2.5">
+                        <span className="font-bold text-white text-sm">{med.medName}</span>
+                        <span className="text-xs font-semibold bg-teal-500/20 text-teal-300 border border-teal-500/30 px-2.5 py-0.5 rounded-full">
+                          {med.dosage}
+                        </span>
+                        <span className="text-xs text-slate-400 bg-white/5 px-2 py-0.5 rounded-md font-mono">
+                          ⏰ {med.reminderTime}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-300">
+                        <strong className="text-slate-400">Schedule:</strong> {med.frequency}
+                      </p>
+                      {med.notes && <p className="text-[11px] text-slate-400 italic">{med.notes}</p>}
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <div className="text-right">
+                        <span className="text-[11px] text-amber-300 font-bold block">🔥 {med.adherenceStreak} day streak</span>
+                        <span className="text-[10px] text-slate-400">{med.patientName}</span>
+                      </div>
+
+                      <button
+                        onClick={() => toggleMedicationTaken(med.id)}
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer ${
+                          med.takenToday
+                            ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20'
+                            : 'bg-white/10 hover:bg-white/20 text-white'
+                        }`}
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>{med.takenToday ? 'Taken Today ✓' : 'Mark Taken'}</span>
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
       </main>
+
+      {/* ADD MEDICATION MODAL */}
+      {showAddMedModal && (
+        <div className="fixed inset-0 z-50 bg-[#0A0D14]/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#121622] border border-white/10 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-base font-bold text-white">Add New Prescription & Reminder</h3>
+                <p className="text-xs text-slate-400">Persists directly to CockroachDB 'medications' table</p>
+              </div>
+              <button onClick={() => setShowAddMedModal(false)} className="text-slate-400 hover:text-white p-1">✕</button>
+            </div>
+
+            <form onSubmit={handleAddMedication} className="space-y-3.5">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Medication Name</label>
+                <input
+                  type="text"
+                  value={medNameInput}
+                  onChange={(e) => setMedNameInput(e.target.value)}
+                  placeholder="e.g. Amlodipine, Lisinopril, or Aspirin"
+                  className="w-full bg-[#0D111A] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Dosage</label>
+                  <input
+                    type="text"
+                    value={medDosageInput}
+                    onChange={(e) => setMedDosageInput(e.target.value)}
+                    placeholder="e.g. 5mg or 50ml"
+                    className="w-full bg-[#0D111A] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Reminder Time</label>
+                  <input
+                    type="time"
+                    value={medReminderTimeInput}
+                    onChange={(e) => setMedReminderTimeInput(e.target.value)}
+                    className="w-full bg-[#0D111A] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none font-mono"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Frequency</label>
+                <select
+                  value={medFrequencyInput}
+                  onChange={(e) => setMedFrequencyInput(e.target.value)}
+                  className="w-full bg-[#0D111A] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none"
+                >
+                  <option value="Once daily (Morning)">Once daily (Morning)</option>
+                  <option value="Once daily (Evening)">Once daily (Evening)</option>
+                  <option value="Twice daily (Morning & Evening)">Twice daily (Morning & Evening)</option>
+                  <option value="As needed (PRN)">As needed (PRN)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Clinical Instructions & Notes</label>
+                <textarea
+                  value={medNotesInput}
+                  onChange={(e) => setMedNotesInput(e.target.value)}
+                  placeholder="e.g. Take with food. Monitor blood pressure weekly."
+                  className="w-full bg-[#0D111A] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none h-20 resize-none"
+                />
+              </div>
+
+              <div className="pt-2 flex space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddMedModal(false)}
+                  className="flex-1 bg-white/5 hover:bg-white/10 text-slate-300 font-semibold py-2.5 rounded-xl text-xs transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition shadow-lg shadow-teal-500/20"
+                >
+                  Save Prescription
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* AUTHENTICATION / ACCOUNT SWITCHER MODAL */}
       {showAuthModal && (

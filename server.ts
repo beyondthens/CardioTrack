@@ -746,6 +746,161 @@ app.delete('/api/vitals/:id', async (req: Request, res: Response) => {
   res.json({ success: true });
 });
 
+// ==================== MEDICATION MANAGER ====================
+let medicationsDatabase: any[] = [
+  {
+    id: 1,
+    userId: 'usr_pat_1',
+    patientName: 'Thabo Mokoena',
+    medName: 'Amlodipine (Norvasc)',
+    dosage: '5mg',
+    frequency: 'Once daily (Morning)',
+    reminderTime: '08:00',
+    takenToday: true,
+    adherenceStreak: 12,
+    notes: 'For blood pressure control. Take with or without food.'
+  },
+  {
+    id: 2,
+    userId: 'usr_pat_1',
+    patientName: 'Thabo Mokoena',
+    medName: 'Atorvastatin (Lipitor)',
+    dosage: '20mg',
+    frequency: 'Once daily (Evening)',
+    reminderTime: '20:00',
+    takenToday: false,
+    adherenceStreak: 8,
+    notes: 'For cholesterol management. Take before bedtime.'
+  },
+  {
+    id: 3,
+    userId: 'usr_pat_1',
+    patientName: 'Thabo Mokoena',
+    medName: 'Disprin (Aspirin Low Dose)',
+    dosage: '75mg',
+    frequency: 'Daily with lunch',
+    reminderTime: '13:00',
+    takenToday: true,
+    adherenceStreak: 21,
+    notes: 'Cardioprotective antiplatelet therapy.'
+  }
+];
+
+app.get('/api/medications', async (req: Request, res: Response) => {
+  try {
+    const client = await cockroachPool.connect();
+    const result = await client.query('SELECT * FROM medications ORDER BY id DESC;');
+    client.release();
+    if (result.rows && result.rows.length > 0) {
+      const mapped = result.rows.map((row: any) => ({
+        id: Number(row.id),
+        userId: row.user_id,
+        patientName: row.patient_name,
+        medName: row.med_name,
+        dosage: row.dosage,
+        frequency: row.frequency,
+        reminderTime: row.reminder_time,
+        takenToday: Boolean(row.taken_today),
+        adherenceStreak: Number(row.adherence_streak),
+        notes: row.notes
+      }));
+      return res.json({ medications: mapped, source: 'cockroachdb' });
+    }
+  } catch (err) {
+    // Fall back to memory
+  }
+  res.json({ medications: medicationsDatabase, source: 'memory' });
+});
+
+app.post('/api/medications', async (req: Request, res: Response) => {
+  const { userId, patientName, medName, dosage, frequency, reminderTime, notes } = req.body;
+  if (!medName || !dosage) {
+    return res.status(400).json({ error: 'Medication name and dosage are required' });
+  }
+
+  const newMed = {
+    id: Date.now(),
+    userId: userId || 'usr_pat_1',
+    patientName: patientName || 'Thabo Mokoena',
+    medName,
+    dosage,
+    frequency: frequency || 'Once daily',
+    reminderTime: reminderTime || '08:00',
+    takenToday: false,
+    adherenceStreak: 1,
+    notes: notes || 'Prescribed daily regimen'
+  };
+
+  medicationsDatabase = [newMed, ...medicationsDatabase];
+
+  try {
+    const client = await cockroachPool.connect();
+    await client.query(
+      `INSERT INTO medications (id, user_id, patient_name, med_name, dosage, frequency, reminder_time, taken_today, adherence_streak, notes)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+      [
+        newMed.id,
+        newMed.userId,
+        newMed.patientName,
+        newMed.medName,
+        newMed.dosage,
+        newMed.frequency,
+        newMed.reminderTime,
+        newMed.takenToday,
+        newMed.adherenceStreak,
+        newMed.notes
+      ]
+    );
+    client.release();
+  } catch (err: any) {
+    console.warn('CockroachDB med insert failed, cached in memory:', err?.message);
+  }
+
+  res.status(201).json({ success: true, medication: newMed });
+});
+
+app.patch('/api/medications/:id/taken', async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  const med = medicationsDatabase.find((m) => m.id === id);
+  if (!med) {
+    return res.status(404).json({ error: 'Medication not found' });
+  }
+
+  med.takenToday = !med.takenToday;
+  if (med.takenToday) {
+    med.adherenceStreak += 1;
+  } else {
+    med.adherenceStreak = Math.max(0, med.adherenceStreak - 1);
+  }
+
+  try {
+    const client = await cockroachPool.connect();
+    await client.query('UPDATE medications SET taken_today = $1, adherence_streak = $2 WHERE id = $3;', [
+      med.takenToday,
+      med.adherenceStreak,
+      id
+    ]);
+    client.release();
+  } catch (err) {
+    // Ignore error
+  }
+
+  res.json({ success: true, medication: med });
+});
+
+app.delete('/api/medications/:id', async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  medicationsDatabase = medicationsDatabase.filter((m) => m.id !== id);
+  try {
+    const client = await cockroachPool.connect();
+    await client.query('DELETE FROM medications WHERE id = $1;', [id]);
+    client.release();
+  } catch (err) {
+    // Ignore error
+  }
+  res.json({ success: true });
+});
+
 // Server bootstrap
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {

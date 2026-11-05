@@ -41,6 +41,20 @@ CREATE TABLE IF NOT EXISTS vitals_telemetry (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS medications (
+  id BIGINT PRIMARY KEY,
+  user_id VARCHAR(64) NOT NULL,
+  patient_name VARCHAR(255) NOT NULL,
+  med_name VARCHAR(255) NOT NULL,
+  dosage VARCHAR(100) NOT NULL,
+  frequency VARCHAR(100) NOT NULL,
+  reminder_time VARCHAR(20) NOT NULL,
+  taken_today BOOLEAN DEFAULT false,
+  adherence_streak INT DEFAULT 0,
+  notes TEXT DEFAULT '',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS pms_addons (
   id VARCHAR(64) PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
