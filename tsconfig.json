@@ -1,36 +1,20 @@
 {
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["DOM", "DOM.Iterable", "ES6"],
-    "allowJs": true,
-    "skipLibCheck": true,
     "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "declaration": false,
-    "downlevelIteration": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "exactOptionalPropertyTypes": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "allowUnusedLabels": false,
-    "allowUnusedParameters": false,
-    "jsx": "preserve",
-    "types": ["@types/react", "@types/react-dom"]
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@/assets/*": [
+        "./assets/*"
+      ]
+    }
   },
   "include": [
-    "app/**/*.{js,ts,jsx,tsx,mdx}",
-    "store/**/*.{js,ts,jsx,tsx}",
-    "lib/**/*.{js,ts,jsx,tsx}",
-    "components/**/*.{js,ts,jsx,tsx}"
-  ],
-  "exclude": ["node_modules"]
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ]
 }

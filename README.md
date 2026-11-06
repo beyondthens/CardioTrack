@@ -1,258 +1,56 @@
-# CardioTrack ZA - Mobile Heart Health Monitor
+# Welcome to your Expo app 👋
 
-Mobile-first heart health tracking app with offline-first capabilities and real-time vitals monitoring.
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## Features
+## Get started
 
-- 📱 **Mobile-First Design**: Optimized for smartphones with responsive layouts
-- 💾 **Offline-First**: State persists locally using Zustand with localStorage backup
-- ❤️ **Vital Tracking**: Heart rate, blood pressure, and health metrics
-- 🔔 **Real-Time Updates**: Live monitoring with automatic data syncing
-- 📊 **Data Visualization**: Charts and trends for health metrics
-- ⚡ **Performance**: PWA with Service Worker for offline functionality
-- 🔒 **Privacy**: All data stored locally, no cloud dependencies required
+1. Install dependencies
 
-## Tech Stack
+   ```bash
+   npm install
+   ```
 
-- **Next.js 14**: React framework with server-side rendering
-- **TypeScript**: Type-safe development
-- **Tailwind CSS**: Mobile-first styling with responsive design
-- **Zustand**: Lightweight state management with persistence
-- **PWA**: Progressive Web App for offline functionality
-- **micro**: Terminal editor for development
+2. Start the app
 
-## Specialized Skills Applied
+   ```bash
+   npx expo start
+   ```
 
-### **Superpowers Skill**
-- Advanced Next.js optimization and performance tuning
-- Complex state management patterns beyond basic usage
-- Advanced TypeScript typing for scalable applications
-- Error boundary implementation and advanced debugging
+In the output, you'll find options to open the app in a
 
-### **UI/UX Pro Skill**
-- Professional mobile-first design systems
-- Advanced component patterns and composition
-- Accessibility compliance (WCAG 2.1 AA)
-- Performance-optimized user interfaces
-- Cross-platform design consistency
+- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-### **Senior Mobile App & App Senior Dev Skill**
-- Enterprise-grade mobile application architecture
-- Advanced React Native/Next.js hybrid development
-- Offline-first application design and implementation
-- Performance optimization for mobile devices
-- Code quality and maintainability standards
+You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-### **AI Model Auto Switch & Rotate Available & Working Models Skill**
-- Intelligent model selection based on task requirements
-- Automatic fallback mechanisms for model failures
-- Real-time model performance monitoring
-- Multi-model integration and orchestration
-- Adaptive learning from usage patterns
+## Get a fresh project
 
-## Quick Start
+When you're ready, run:
 
 ```bash
-# Install dependencies
-npm install
-
-# Run development server on port 3000
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
+npm run reset-project
 ```
 
-## Development Workflow
+This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
 
-### Using micro Editor
-```bash
-# Open the editor
-micro app/page.tsx
+### Other setup steps
 
-# Edit components quickly
-micro store/useStore.ts
-```
+- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
+- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
+- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
 
-### Using tmux
-```bash
-# Split terminal for parallel development
-# One pane: npm run dev
-# Another pane: micro your-file.tsx
-```
+## Learn more
 
-### JSON Debugging
-```bash
-# Inspect Zustand state
-jq '.' store/useStore.ts
-```
+To learn more about developing your project with Expo, look at the following resources:
 
-## Mobile Development
+- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
+- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
-### For Termux (Android)
-```bash
-# Install essential tools
-pkg install micro jq tmux git
+## Join the community
 
-# Clone this repository
-.git clone https://github.com/your-repo/cardiotrack-za-local.git
-cd cardiotrack-za-local
+Join our community of developers creating universal apps.
 
-# Run the app
-npm run dev
-```
-
-### For iOS with Code-Server
-```bash
-# Install Code-Server on your server
-# Access via phone browser
-http://your-server-ip:8080
-```
-
-## State Management
-
-The app uses Zustand for state management with localStorage persistence:
-
-```typescript
-// Patient data (persisted)
-const { patientData, setPatientData } = useStore()
-
-// Reading history (persisted)
-const { readingHistory, addReading } = useStore()
-
-// Offline status
-const { isOffline, setOfflineStatus } = useStore()
-```
-
-## Mobile-First Design
-
-All components use mobile-first principles with:
-- Max-width containers (max-w-[430px]) for app-like feel
-- Touch-friendly buttons and inputs
-- Safe area padding for notches
-- Responsive typography
-
-## Offline Capabilities
-
-The app works offline by:
-1. Storing all data locally in Zustand with localStorage
-2. Using Service Worker for caching
-3. Queuing API calls for later sync when online
-4. Showing offline status indicators
-
-## Health Tracking
-
-### Supported Metrics
-- Heart Rate (BPM)
-- Blood Pressure (Systolic/Diastolic)
-- Blood Type
-- Medication Reminders
-- Allergy Tracking
-
-### Data Visualization
-- Daily trends
-- Weekly averages
-- Custom date ranges
-- Export functionality
-
-## Privacy & Security
-
-- All data stored locally on device
-- No external API calls required for basic functionality
-- Encrypted local storage using Zustand middleware
-- Offline-first architecture protects data integrity
-
-## Deployment
-
-### Production Build
-```bash
-npm run build
-npm start
-```
-
-### Docker Deployment
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
-## Troubleshooting
-
-### Common Issues
-
-**"Cannot read property of undefined" errors**
-```bash
-# Check Zustand store initialization
-jq '.' store/useStore.ts
-```
-
-**Offline issues**
-```bash
-# Check network status
-navigator.onLine
-```
-
-**TypeScript errors**
-```bash
-# Type check
-npm run type-check
-```
-
-**Performance issues**
-```bash
-# Optimize images and assets
-npm run build
-```
-
-## Mobile App Features
-
-### Home Screen
-- Patient overview
-- Quick vitals display
-- Action buttons for common tasks
-
-### Add Reading
-- Manual vitals entry
-- Voice input support
-- Smart defaults based on patient profile
-
-### History
-- Date-based reading view
-- Interactive charts
-- Export to PDF/JSON
-
-### Settings
-- Profile management
-- Notification preferences
-- Data export/import
-- Privacy settings
-
-## Future Enhancements
-
-- Integration with wearable devices (Apple Health, Google Fit)
-- AI-powered health insights
-- Family member sharing
-- Emergency SOS feature
-- Multi-language support
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-This project follows mobile-first development principles and offline-first architecture to ensure reliable heart health monitoring even in low-connectivity environments.
-
----
-
-*Built with ❤️ for heart health monitoring in South Africa*
+- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
+- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
